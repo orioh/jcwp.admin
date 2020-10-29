@@ -5,7 +5,15 @@ const routes: RouteConfig[] = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      {
+        path: '', component: () => import('pages/Index.vue')
+      },
+      {
+        path: 'editor', component: () => import('pages/FrameEditor.vue')
+      },
+      {
+        path: 'main', component: () => import('pages/FrameViewer.vue')
+      }
     ]
   },
 
