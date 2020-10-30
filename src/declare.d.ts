@@ -3,6 +3,6 @@
  * to prevent warning propmt of import from 'js' module
  */
 
-declare module 'vue-monaco'
+// declare module 'vue-monaco'
 
-declare module 'vue-power-drag'
+// declare module 'vue-power-drag'
