@@ -9,14 +9,16 @@
       :base-height="baseHeight"
     >
       <template v-for="(item, index) in list" :slot="'slot' + index">
-        <div :key="index" class="dragHandle">
+        <div :key="index" class="dragHandleWrapper">
           <div class="tool">
             <!-- <span @click="deleteItem(index)">删除此框</span> -->
            <q-icon name="close" class="text-red" style="font-size: 1rem;" />
           </div>
-          <div class="chart">
+          <div class="chart ">
             <!-- <v-chart :options="polar" autoresize="true"/> -->
             <WidgetSelector :widgetConfig="item.consfig"></WidgetSelector>
+          </div>
+          <div class="dragHandle">
           </div>
         </div>
       </template>
@@ -120,11 +122,32 @@ export default class FrameComponent extends Vue {
 
 
 <style lang="scss" >
+
+.dragAndResize {
+  .resizeHandle {
+    z-index: 1000 !important;
+  }
+}
+
+.dragHandleWrapper {
+  height: 100%; 
+  position: relative;
+}
+
 .dragHandle {
   //拖动手柄样式
-  padding-top: 10px !important;
+  // padding-top: 10px !important;
   height: 100%; //自定义内容样式
-  .tool {
+  position: absolute;
+  z-index: 999;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+}
+
+.tool {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 2px;
     position: absolute;
@@ -133,12 +156,12 @@ export default class FrameComponent extends Vue {
     cursor: pointer;
     font-weight: bold;
   }
-  .chart {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    cursor: default;
-  }
+
+.chart {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: default;
 }
 
 /**
