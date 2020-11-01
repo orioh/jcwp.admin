@@ -11,12 +11,13 @@
       <template v-for="(item, index) in list" :slot="'slot' + index">
         <div :key="index" class="dragHandle">
           <div class="tool">
-            <span @click="deleteItem(index)">删除此框</span>
+            <!-- <span @click="deleteItem(index)">删除此框</span> -->
+           <q-icon name="close" class="text-red" style="font-size: 1rem;" />
           </div>
           <div class="chart">
-            <v-chart :options="polar" />
+            <!-- <v-chart :options="polar" autoresize="true"/> -->
+            <WidgetSelector :widgetConfig="item.consfig"></WidgetSelector>
           </div>
-          <!-- <div class="chart" :ref="'chart' + index"></div> -->
         </div>
       </template>
     </power-drag>
@@ -25,9 +26,10 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
+import  WidgetSelector from 'components/widget/WidgetSelector.vue';
 
 @Component({
-  components: { },
+  components: { WidgetSelector },
 })
 export default class FrameComponent extends Vue {
   screenWidth = window.innerWidth;
@@ -44,6 +46,7 @@ export default class FrameComponent extends Vue {
       y: 1,
       sizex: 3,
       sizey: 2,
+      consfig: {id:1, name: 'w1'}
     },
     {
       id: 2,
@@ -51,6 +54,7 @@ export default class FrameComponent extends Vue {
       y: 1,
       sizex: 2,
       sizey: 2,
+      consfig: {id:2, name: 'w2'}
     },
   ];
   chartOptions: {
@@ -118,12 +122,14 @@ export default class FrameComponent extends Vue {
 <style lang="scss" >
 .dragHandle {
   //拖动手柄样式
-  padding: 1.5rem !important;
+  padding-top: 10px !important;
   height: 100%; //自定义内容样式
   .tool {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 2px;
     position: absolute;
-    right: 0.5rem;
-    top: 0.5rem;
+    right: 0px;
+    top: 0px;
     cursor: pointer;
     font-weight: bold;
   }
@@ -133,5 +139,15 @@ export default class FrameComponent extends Vue {
     overflow: hidden;
     cursor: default;
   }
+}
+
+/**
+ * The default size is 600px×400px, for responsive charts
+ * you may need to set percentage values as follows (also
+ * don't forget to provide a size for the container).
+ */
+.echarts {
+  width: 100%;
+  height: 100%;
 }
 </style>

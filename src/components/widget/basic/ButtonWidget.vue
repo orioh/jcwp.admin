@@ -5,10 +5,9 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import * as def from "src/model";
 
 @Component
-export default class DefaultComponent extends Vue {
+export default class ButtonWidget extends Vue {
 
 }
 </script>

@@ -34,23 +34,29 @@ export class Entity extends Vue {
     }
 
 
-    initConfig(config: EntityConfig) {
+    loadConfig(config: EntityConfig) {
         this.isReady = false;
-        if (config !== undefined) {
-            this.id = config.id;
-            this.name = config.name;
+        this.isLoading = true;
 
-            if (config.props !== undefined) {
-                let cfgVals = config.props;
-                this.props.forEach(p => {
-                    if (p.name in cfgVals) {
-                        p.value = cfgVals[p.name];
-                    }
-                });
+        setTimeout(() => {
+            if (config !== undefined) {
+                this.id = config.id;
+                this.name = config.name;
+    
+                if (config.props !== undefined) {
+                    let cfgVals = config.props;
+                    this.props.forEach(p => {
+                        if (p.name in cfgVals) {
+                            p.value = cfgVals[p.name];
+                        }
+                    });
+                }
+                this.isReady = true;
             }
+            this.isLoading = false;
 
-            this.isReady = true;
-        }
+        }, 500);
+     
 
     }
 }
