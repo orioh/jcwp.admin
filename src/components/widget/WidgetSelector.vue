@@ -17,7 +17,6 @@
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
 import * as def from "src/model";
-import { WidgetService } from "src/service/WidgetService";
 import WidgetBasicComponent from "components/widget/WidgetBasicComponent.vue";
 // import WidgetWrapper from "components/widget/WidgetWrapper.vue";
 

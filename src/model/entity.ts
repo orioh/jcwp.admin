@@ -1,5 +1,6 @@
 import { Property } from "./prop";
 import { Vue } from 'vue-property-decorator';
+import { EventBus } from 'src/service/eventBus';
 
 export class Entity extends Vue {
     id: string = '';
@@ -9,6 +10,8 @@ export class Entity extends Vue {
     isLoading: boolean = false;
     isEdit: boolean = false;
     isReady: boolean = false;
+
+    config: EntityConfig;
 
     protected _props: Map<string, Property<any>>;
     get props(): Map<string, Property<any>> {
@@ -40,9 +43,10 @@ export class Entity extends Vue {
 
         setTimeout(() => {
             if (config !== undefined) {
+                this.config = config;
                 this.id = config.id;
                 this.name = config.name;
-    
+
                 if (config.props !== undefined) {
                     let cfgVals = config.props;
                     this.props.forEach(p => {
@@ -51,13 +55,12 @@ export class Entity extends Vue {
                         }
                     });
                 }
+                EventBus.$emit('widget-loaded', this);
                 this.isReady = true;
             }
             this.isLoading = false;
 
         }, 500);
-     
-
     }
 }
 

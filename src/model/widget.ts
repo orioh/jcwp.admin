@@ -24,5 +24,9 @@ export class Widget extends Entity {
 
 
 export interface WidgetConfig extends EntityConfig {
+    x: number;
+    y: number;
+    sizex: number;
+    sizey: number;
     widgetName: string;
 }

@@ -2,127 +2,99 @@
   <div class="fit">
     <power-drag
       ref="cyGridster"
-      :your-list="list"
+      :your-list="frameConfig.widgets"
       :base-margin-left="baseMarginLeft"
       :base-margin-top="baseMarginTop"
       :base-width="baseWidth"
       :base-height="baseHeight"
     >
-      <template v-for="(item, index) in list" :slot="'slot' + index">
+      <template
+        v-for="(item, index) in frameConfig.widgets"
+        :slot="'slot' + index"
+      >
         <div :key="index" class="dragHandleWrapper">
           <div class="tool">
-            <!-- <span @click="deleteItem(index)">删除此框</span> -->
-           <q-icon name="close" class="text-red" style="font-size: 1rem;" />
+            <q-icon
+              name="format_list_bulleted"
+              class="text-yellow"
+              style="font-size: 1rem"
+            >
+              <q-menu>
+                <q-list dense style="min-width: 100px">
+                  <q-item clickable v-close-popup>
+                    <div class="row items-center">
+                      <q-icon name="edit" size="xs" />
+                      <div class="q-ml-md">Edit</div>
+                    </div>
+                  </q-item>
+                  <q-item clickable v-close-popup @click="deleteItem(item)">
+                    <div class="row items-center">
+                      <q-icon name="close" class="text-red" size="xs"  />
+                      <div class="q-ml-md">Remove</div>
+                    </div>
+                  </q-item>
+                </q-list>
+              </q-menu>
+            </q-icon>
           </div>
-          <div class="chart ">
-            <!-- <v-chart :options="polar" autoresize="true"/> -->
-            <WidgetSelector :widgetConfig="item.consfig"></WidgetSelector>
+          <div class="chart">
+            <WidgetSelector :widgetConfig="item"></WidgetSelector>
           </div>
-          <div class="dragHandle">
-          </div>
+          <div class="dragHandle"></div>
         </div>
       </template>
     </power-drag>
+
+    <q-inner-loading :showing="isLoading">
+      <q-spinner size="50px" color="primary" />
+    </q-inner-loading>
   </div>
 </template>
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import  WidgetSelector from 'components/widget/WidgetSelector.vue';
+import WidgetSelector from "components/widget/WidgetSelector.vue";
+import * as def from "src/model";
 
 @Component({
   components: { WidgetSelector },
 })
-export default class FrameComponent extends Vue {
+export default class FrameComponent extends def.Frame {
+  @Prop({ type: Object as () => def.FrameConfig })
+  frameConfig!: def.FrameConfig;
+
   screenWidth = window.innerWidth;
   screenHeight = window.innerHeight;
-  baseWidth = 90.8333 * (this.screenWidth / 1366);
-  baseHeight = 100 * (this.screenHeight / 638);
+  // baseWidth = 90.8333 * (this.screenWidth / 1366);
+  // baseHeight = 100 * (this.screenHeight / 638);
+  baseWidth = 30;
+  baseHeight = 30;
   baseMarginLeft = 20 * (this.screenWidth / 1366);
   baseMarginTop = 20 * (this.screenHeight / 638);
-
-  list = [
-    {
-      id: 1,
-      x: 10,
-      y: 1,
-      sizex: 3,
-      sizey: 2,
-      consfig: {id:1, name: 'w1'}
-    },
-    {
-      id: 2,
-      x: 8,
-      y: 1,
-      sizex: 2,
-      sizey: 2,
-      consfig: {id:2, name: 'w2'}
-    },
-  ];
-  chartOptions: {
-    series: [
-      {
-        data: [1, 2, 3]; // sample data
-      }
-    ];
-  };
 
   mounted() {
     console.log("frame mounted");
     let gridster = this.$refs["cyGridster"] as any; //获取gridster实例
     gridster.init(); //在适当的时候初始化布局组件
 
-    for (let i = 0; i <= 360; i++) {
-      let t = (i / 180) * Math.PI;
-      let r = Math.sin(2 * t) * Math.cos(2 * t);
-      this.data.push([r, i]);
-    }
-
-    this.polar = {
-      title: {
-        text: "极坐标双数值轴",
-      },
-      legend: {
-        data: ["line"],
-      },
-      polar: {
-        center: ["50%", "54%"],
-      },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "cross",
-        },
-      },
-      angleAxis: {
-        type: "value",
-        startAngle: 0,
-      },
-      radiusAxis: {
-        min: 0,
-      },
-      series: [
-        {
-          coordinateSystem: "polar",
-          name: "line",
-          type: "line",
-          showSymbol: false,
-          data: this.data,
-        },
-      ],
-      animationDuration: 2000,
-    };
+    this.loadConfig(this.frameConfig);
   }
-  deleteItem(index: number) {}
 
-  data: any[] = [];
-  polar: any = {};
+  deleteItem(item: def.WidgetConfig) {
+    this.removeWidget(item);
+  }
+
+  /**
+   * destroyed only work in .vue file .. ?
+   */
+  destroyed() {
+    this.destroy();
+  }
 }
 </script>
 
 
 <style lang="scss" >
-
 .dragAndResize {
   .resizeHandle {
     z-index: 1000 !important;
@@ -130,7 +102,7 @@ export default class FrameComponent extends Vue {
 }
 
 .dragHandleWrapper {
-  height: 100%; 
+  height: 100%;
   position: relative;
 }
 
@@ -148,14 +120,15 @@ export default class FrameComponent extends Vue {
 }
 
 .tool {
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 2px;
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    cursor: pointer;
-    font-weight: bold;
-  }
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 2px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  cursor: pointer;
+  font-weight: bold;
+  z-index: 1001;
+}
 
 .chart {
   width: 100%;
