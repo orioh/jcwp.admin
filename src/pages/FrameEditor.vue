@@ -1,7 +1,7 @@
 <template>
   <div class='fit'>
     frame editor
-    <FrameComponent :frameConfig="curFrame"></FrameComponent>
+    <FrameComponent :frameConfig="curFrame" :allowEdit="true"></FrameComponent>
   </div>
 </template>
 

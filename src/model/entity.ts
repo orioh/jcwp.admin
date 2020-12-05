@@ -2,7 +2,7 @@ import { Property } from "./prop";
 import { Vue } from 'vue-property-decorator';
 import { EventBus } from 'src/service/eventBus';
 
-export class Entity extends Vue {
+export abstract class Entity extends Vue {
     id: string = '';
     name: string = '';
     type: EntityType;
@@ -55,13 +55,16 @@ export class Entity extends Vue {
                         }
                     });
                 }
-                EventBus.$emit('widget-loaded', this);
+                EventBus.$emit('entity-loaded', this);
                 this.isReady = true;
+                this.afterLoadConfig();
             }
             this.isLoading = false;
 
         }, 500);
     }
+
+    abstract afterLoadConfig(): void;
 }
 
 export enum EntityType {

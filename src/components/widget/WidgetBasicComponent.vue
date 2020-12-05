@@ -16,7 +16,7 @@ export default class WidgetBasicComponent extends def.Widget {
     console.log(`basic created, ${this.widgetConfig.name}`);
   }
   mounted() {
-    console.log(`basic mounted, ${this.widgetConfig.name}`);
+    console.log(`basic mounted, ${this.widgetConfig.name}, ${this.showHeader.value}`);
     this.loadConfig(this.widgetConfig);
   }
 }

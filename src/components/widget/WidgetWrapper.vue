@@ -1,6 +1,6 @@
 <template>
   <div :v-if="widgetInstance" class="fit col">
-    <div class="header" @click="aa">{{ widgetName }}</div>
+    <div :v-if="showHeader()" class="header" @click="aa">{{ widgetName }}</div>
     <div class="full-width col-grow">
       <slot></slot>
     </div>
@@ -25,7 +25,7 @@ export default class WidgetWrapper extends Vue {
     return this.widgetInstance && this.widgetInstance.isLoading;
   }
 
-  get showHeader(): boolean {
+  showHeader(): boolean {
     return this.widgetInstance && (this.widgetInstance.showHeader.value as boolean);
   }
 

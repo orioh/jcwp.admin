@@ -7,7 +7,7 @@ import * as def from "src/model";
 import * as prop from './prop';
 
 
-export class Widget extends Entity {
+export abstract class Widget extends Entity {
 
     
     @Prop({ type: Object as () => def.WidgetConfig })
@@ -19,6 +19,10 @@ export class Widget extends Entity {
 
     constructor() {
         super(EntityType.Widget);
+    }
+
+    afterLoadConfig(){
+        console.log(`widget ${this.name} after load condig`);
     }
 }
 

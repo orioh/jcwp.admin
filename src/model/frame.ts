@@ -1,16 +1,31 @@
 import { Entity, EntityConfig, EntityType } from './entity';
 import { EventBus } from 'src/service/eventBus';
 import { Widget, WidgetConfig } from './widget';
+import { MsgService } from 'src/service/msgService';
 
-export class Frame extends Entity {
+export abstract class Frame extends Entity {
+
+    widgetMap: Map<string, Entity>;
+
     constructor() {
         super(EntityType.Frame);
+        this.widgetMap = new Map<string, Entity>();
+        console.log('frame construcor', this.widgetMap)
 
-        EventBus.$on('widget-loaded', this.onWidgetLoaded);
+        EventBus.$on('entity-loaded', (e: any) => { this.onEntityLoaded(e) });
     }
 
-    onWidgetLoaded(widget: Widget) {
-        console.log('frame, get widget loaded', widget);
+    onEntityLoaded(entity: Entity) {
+        if (entity !== undefined) {
+            let id = entity.id;
+            let name = entity.name;
+            MsgService.info(`frame, get entity loaded, ${id}, ${name}`);
+            if (this.widgetMap.has(id)) {
+                MsgService.error(`frame, duplicated widget loaded`);
+            } else {
+                this.widgetMap.set(id, entity);
+            }
+        }
     }
 
 
@@ -25,7 +40,8 @@ export class Frame extends Entity {
     }
 
     destroy() {
-        EventBus.$off('widget-loaded', this.onWidgetLoaded);
+        this.widgetMap.clear();
+        EventBus.$off('entity-loaded', (e: any) => { this.onEntityLoaded(e) } );
     }
 }
 
