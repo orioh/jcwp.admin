@@ -13,10 +13,8 @@ import WidgetWrapper from "components/widget/WidgetWrapper.vue";
 export default class WidgetBasicComponent extends def.Widget {
 
   created() {
-    console.log(`basic created, ${this.widgetConfig.name}`);
   }
   mounted() {
-    console.log(`basic mounted, ${this.widgetConfig.name}, ${this.showHeader.value}`);
     this.loadConfig(this.widgetConfig);
   }
 }

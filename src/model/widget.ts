@@ -13,8 +13,8 @@ export abstract class Widget extends Entity {
     @Prop({ type: Object as () => def.WidgetConfig })
     widgetConfig!: def.WidgetConfig;
 
-    title: prop.PString = new prop.PString('Title');
-    showHeader: prop.PBoolean = new prop.PBoolean('Show Header');
+    title: prop.PString = new prop.PString('Title', "hellow");
+    showHeader: prop.PBoolean = new prop.PBoolean('Show Header', true);
     
 
     constructor() {
@@ -22,7 +22,6 @@ export abstract class Widget extends Entity {
     }
 
     afterLoadConfig(){
-        console.log(`widget ${this.name} after load condig`);
     }
 }
 

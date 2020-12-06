@@ -1,11 +1,13 @@
 <template>
-  <div :v-if="widgetInstance" class="fit col">
-    <div :v-if="showHeader()" class="header" @click="aa">{{ widgetName }}</div>
-    <div class="full-width col-grow">
-      <slot></slot>
+  <div  class="fit">
+    <div v-if="viewReady" class="fit col">
+      <div v-show="showHeader" class="header" @click="aa">{{ widgetName }}</div>
+      <div class="full-width col-grow">
+        {{showHeader}} , {{widgetInstance.title.value}}, {{viewReady}}
+        <slot></slot>
+      </div>
     </div>
-
-    <q-inner-loading :showing="loading()">
+    <q-inner-loading :showing="loading">
       <q-spinner size="50px" color="primary" />
     </q-inner-loading>
   </div>
@@ -21,17 +23,17 @@ export default class WidgetWrapper extends Vue {
   @Prop({ type: Object as () => def.Widget }) widgetInstance!: def.Widget;
 
 
-  loading(): boolean {
+  get loading(): boolean {
     return this.widgetInstance && this.widgetInstance.isLoading;
   }
 
-  showHeader(): boolean {
+  get showHeader(): boolean {
     return this.widgetInstance && (this.widgetInstance.showHeader.value as boolean);
   }
 
   get widgetName(): string {
     if (this.widgetInstance) {
-      return this.widgetInstance.name;
+      return this.widgetInstance.title.value || this.widgetInstance.name;
     }
     return "";
   }

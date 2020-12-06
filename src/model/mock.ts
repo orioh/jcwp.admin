@@ -5,7 +5,9 @@ class _mock {
 
     // widgets: def.WidgetConfig[] = [];
 
+    frameList: def.FrameConfig[] = [];
     testFrame: def.FrameConfig;
+
 
     constructor(){
         this.init();
@@ -17,6 +19,12 @@ class _mock {
             Funcs.createWidgetConfig('w1', 'Test'),
             Funcs.createWidgetConfig('w2', 'Test'),
         ]
+
+        
+        let f2 = Funcs.createFrameConfig('test2');
+
+        this.frameList.push(this.testFrame);
+        this.frameList.push(f2);
     }
 
     

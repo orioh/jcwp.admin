@@ -9,10 +9,15 @@ export abstract class Frame extends Entity {
 
     constructor() {
         super(EntityType.Frame);
-        this.widgetMap = new Map<string, Entity>();
-        console.log('frame construcor', this.widgetMap)
+        
+    }
 
+    init(config: EntityConfig){
+        this.widgetMap = new Map<string, Entity>();
+        console.log('frame init')
+        EventBus.$off('entity-loaded');
         EventBus.$on('entity-loaded', (e: any) => { this.onEntityLoaded(e) });
+        this.loadConfig(config);
     }
 
     onEntityLoaded(entity: Entity) {
@@ -40,8 +45,9 @@ export abstract class Frame extends Entity {
     }
 
     destroy() {
-        this.widgetMap.clear();
-        EventBus.$off('entity-loaded', (e: any) => { this.onEntityLoaded(e) } );
+        // MsgService.warn('frame call destroy');
+        // this.widgetMap.clear();
+        // EventBus.$off('entity-loaded');
     }
 }
 

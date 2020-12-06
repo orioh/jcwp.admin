@@ -1,22 +1,39 @@
 
 class _MsgService {
 
-    info(msg: string){
+    info(msg: string) {
         this.message(MsgLevel.Info, msg);
     }
-    warn(msg: string){
+    warn(msg: string) {
         this.message(MsgLevel.Warn, msg);
     }
-    debug(msg: string){
+    debug(msg: string) {
         this.message(MsgLevel.Debug, msg);
     }
-    error(msg: string){
+    error(msg: string) {
         this.message(MsgLevel.Error, msg);
     }
-    message(level: MsgLevel, msg:string){
+    message(level: MsgLevel, msg: string) {
         let lv = level.toString().padStart(5, ' ');
         let time = (new Date()).toLocaleString();
-        console.log(`[${lv}] [${time}] ${msg}`);
+        let log = `[${lv}] [${time}] ${msg}`;
+        switch (level) {
+            case MsgLevel.Warn:
+                console.warn(log);
+                break;
+
+            case MsgLevel.Debug:
+                console.warn(log);
+                break;
+
+            case MsgLevel.Error:
+                console.error(log);
+                break;
+
+            default:
+                console.log(log);
+                break;
+        }
     }
 }
 

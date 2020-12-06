@@ -1,6 +1,6 @@
 <template>
   <div class="container row">
-    <div class="widget-panel col-grow">
+    <div :key="widgetPanelKey + 10" class="widget-panel full-height col-grow">
       <power-drag
         ref="cyGridster"
         :your-list="frameConfig.widgets"
@@ -53,7 +53,7 @@
       </q-inner-loading>
     </div>
     <div :key="propKey" class="prop-panel">
-      <WidgetPropEditorComponent :entityInstance="selectedWidget">
+      <WidgetPropEditorComponent :entity="getSelectedWidget()">
       </WidgetPropEditorComponent>
     </div>
   </div>
@@ -85,32 +85,55 @@ export default class FrameComponent extends def.Frame {
   baseMarginTop = 20 * (this.screenHeight / 638);
 
   propKey = 0;
+  widgetPanelKey = 0;
   selectedWidget: def.Entity;
 
-  mounted() {
-    console.log("frame mounted");
-    this.loadConfig(this.frameConfig);
+  created() {
+    console.log("frame created");
+    this.doInit();
+  }
+
+  doInit() {
+    this.selectedWidget = undefined as any;
+    this.init(this.frameConfig);
   }
 
   afterLoadConfig() {
     console.log("frame afterLoadConfig");
-    let gridster = this.$refs["cyGridster"] as any; //获取gridster实例
-    gridster.init(); //在适当的时候初始化布局组件
+    this.relaodGridster();
+  }
+
+  relaodGridster() {
+    this.propKey = (this.propKey + 1) % 2;
+    this.widgetPanelKey = (this.widgetPanelKey + 1) % 2;
+    setTimeout(() => {
+      let gridster = this.$refs["cyGridster"] as any; //获取gridster实例
+      gridster.init(); //在适当的时候初始化布局组件
+    }, 30);
   }
 
   deleteItem(item: def.WidgetConfig) {
     this.removeWidget(item);
   }
 
-  showEdit(item: def.WidgetConfig){
-    return this.allowEdit &&
-    this.selectedWidget!==undefined && this.selectedWidget.id===item.id;
+  isNullSelect() {
+    return this.selectedWidget === undefined || this.selectedWidget === null;
+  }
+  showEdit(item: def.WidgetConfig) {
+    return (
+      this.allowEdit &&
+      !this.isNullSelect() &&
+      this.selectedWidget.id === item.id
+    );
   }
 
+  getSelectedWidget() {
+    return this.selectedWidget;
+  }
   widgetSelected(item: def.WidgetConfig) {
     if (this.allowEdit && item !== undefined) {
       if (
-        this.selectedWidget === undefined ||
+        this.isNullSelect() ||
         (this.selectedWidget.id !== item.id && this.widgetMap.has(item.id))
       ) {
         MsgService.info(`select widget ${item.name}`);
@@ -119,10 +142,25 @@ export default class FrameComponent extends def.Frame {
       }
     }
   }
+
+  saveFrame() {
+    this.frameConfig.widgets = [];
+
+    this.widgetMap.forEach((v, k) => {
+      let save: { [key: string]: any } = {};
+      let props = Array.from(v.getProps().values());
+      props.forEach((x) => (save[x.name] = x.value));
+      v.config.props = save;
+      this.frameConfig.widgets.push(v.config as any);
+    });
+
+    this.doInit();
+  }
   /**
    * destroyed only work in .vue file .. ?
    */
   destroyed() {
+    MsgService.debug(`frame '${this.name}' destroyed called`);
     this.destroy();
   }
 }
@@ -130,9 +168,9 @@ export default class FrameComponent extends def.Frame {
 
 
 <style lang="scss" >
-.container{
+.container {
   width: 100vw;
-  height: calc(100vh-50px);
+  height: calc(100vh - 100px);
 }
 .dragAndResize {
   .resizeHandle {
@@ -178,7 +216,8 @@ export default class FrameComponent extends def.Frame {
 
 .prop-panel {
   min-width: 200px;
-  background-color: lightcoral;
+  height: 100%;
+  border-left: 1px solid lightgrey;
 }
 /**
  * The default size is 600px×400px, for responsive charts

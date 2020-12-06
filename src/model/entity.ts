@@ -12,25 +12,7 @@ export abstract class Entity extends Vue {
     isReady: boolean = false;
 
     config: EntityConfig;
-
-    protected _props: Map<string, Property<any>>;
-    get props(): Map<string, Property<any>> {
-        if (this._props) { return this._props; }
-
-        this._props = new Map<string, Property<any>>();
-        for (let key in this) {
-            let p = this[key] as any;
-            let pn = p && p.name;
-            /**
-             * note: use "prop.name" instead of "key"
-             */
-            if (p instanceof Property && !this._props.has(pn)) {
-                this._props.set(pn, p);
-            }
-        }
-        return this._props;
-    }
-
+   
     constructor(type: EntityType) {
         super();
         this.type = type;
@@ -49,7 +31,7 @@ export abstract class Entity extends Vue {
 
                 if (config.props !== undefined) {
                     let cfgVals = config.props;
-                    this.props.forEach(p => {
+                    this.getProps().forEach(p => {
                         if (p.name in cfgVals) {
                             p.value = cfgVals[p.name];
                         }
@@ -61,7 +43,23 @@ export abstract class Entity extends Vue {
             }
             this.isLoading = false;
 
-        }, 500);
+        }, 200);
+    }
+
+    getProps(): Map<string, Property<any>> {
+        let props = new Map<string, Property<any>>();
+        for (let key in this) {
+            let p = this[key] as any;
+            let pn = p && p.name;
+            
+            /**
+             * note: use "prop.name" instead of "key"
+             */
+            if (p instanceof Property && !props.has(pn)) {
+                props.set(pn, p);
+            }
+        }
+        return props;
     }
 
     abstract afterLoadConfig(): void;

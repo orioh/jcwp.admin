@@ -29,7 +29,6 @@ export default class WidgetSelector extends Vue {
 
   created() {
     this.targetComponent = WidgetBasicComponent;
-    console.log('>>>>', this.targetComponent);
   }
 
   mounted() {
